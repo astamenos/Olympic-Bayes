@@ -39,7 +39,7 @@ The main assumptions of my analysis are that:
 \begin{center} Let $H_0: \lambda_1 > \lambda_0\;\;\;$ and $\;\;\;H_1: \lambda_1 \le \lambda_0$.
 \end{center}
 
-\setlength\parindent{24pt}In order to conduct this hypothesis test, we used Monte Carlo sampling to sample from the posterior distributions $p(\lambda_0\mid Y_0)\;\;$ and $\;\;p(\lambda_1\mid Y_1)$. We then used the samples to calculate the proportion of $(\lambda_0, \;\lambda_1)$ pairs for which $\lambda_1$ exceeds $\lambda_0$. This percentage is an approximation of the probability that the null hypothesis is true. Based on the sample and the parameters of the uninformative prior defined in the previous section,
+\setlength\parindent{24pt}In order to conduct this hypothesis test, I used Monte Carlo sampling to sample from the posterior distributions $p(\lambda_0\mid Y_0)\;\;$ and $\;\;p(\lambda_1\mid Y_1)$. I then used the samples to calculate the proportion of $(\lambda_0, \;\lambda_1)$ pairs for which $\lambda_1$ exceeds $\lambda_0$. This percentage is an approximation of the probability that the null hypothesis is true. Based on the sample and the parameters of the uninformative prior defined in the previous section,
 $$P(\lambda_1 > \lambda_0 \mid Y_0, \;Y_1) \approx 0.0053$$
 The probability that the null hypothesis is true (i.e., that there is a host country advantage) is only 0.0053, so there is sufficient evidence to conclude that there is no host-country advantage. *Table 1* lists the probability of the null hypothesis for different values $a = b = \epsilon$. The probability that the null hypothesis is true changes slightly, but not enough to change the conclusion that in the aggregate analysis, there is no home-country advantage.
 
@@ -58,16 +58,16 @@ $\epsilon$ & $P(H_0)$\\ \hline
 
 \section{Prediction}\label{s:prediction}
 
-\setlength\parindent{24pt}In order to predict how many medals France will win in 2024, it is important to know how many French athletes will participate in the 2024 Olympics. The Poisson likelihood used throughout this paper assumes that N is fixed or non-random. In order to continue using the same model, we calculated the percent change in the number of participants for all country-year pairs in the dataset:
+\setlength\parindent{24pt}In order to predict how many medals France will win in 2024, it is important to know how many French athletes will participate in the 2024 Olympics. The Poisson likelihood used throughout this paper assumes that N is fixed or non-random. In order to continue using the same model, I calculated the percent change in the number of participants for all country-year pairs in the dataset:
 $$\%\Delta N = \frac{N_1-N_0}{N_0}$$
-We then calculated the approximate median percent change in participants and used it to estimate the number of French participants in the 2024 Olympics:
+I then calculated the approximate median percent change in participants and used it to estimate the number of French participants in the 2024 Olympics:
 $$N_{1, \;FR} \approx N_{0, \;FR}\left(1 + \%\Delta N \right)=398\cdot(1+0.847)=735.12\;\;participants$$
 A similar method was used to calculate a pseudo datapoint for France for 2024.
 $$Y_{1, \;FR} \approx Y_{0, \;FR}\left(1 + \%\Delta Y \right)=33\cdot(1+0.549)=51.1\;\;medals$$
-With estimates for these numbers, we then used a Poisson-Gamma likelihood-prior model similar to the ones from the previous sections:
+With estimates for these numbers, I then used a Poisson-Gamma likelihood-prior model similar to the ones from the previous sections:
 $Y_{1,\;FR}\mid\lambda_{1,\;FR}\sim Poisson\left(N_{1,\;FR},\; \lambda_{1,\;FR}\right)\;$ and $\;\lambda_{1,\;FR}\sim Gamma(\epsilon,\;\epsilon)$, where $\epsilon > 0$ is small. For this Poisson-gamma conjugate pair, $\lambda_{1,\;FR}\mid Y_{1,\;FR}\sim Gamma(Y_{1,\;FR}+\epsilon, \;N_{1,\;FR} + \epsilon)$.
 
-\setlength\parindent{24pt}In order to make a prediction, we took a sample of 1,000,000 from the posterior distribution. We then plugged each simulated $\lambda^*$ in the likelihood function and drew a total of 1,000,000 estimated $Y^*$ values. Through this Monte Carlo approximation approach, we essentially sampled values from the posterior predictive distribution (PPD), $f^*(Y^*\mid Y)$. In other words, the 1,000,000 values that are the output of this procedure serve as an approximation of the posterior predictive distribution. *Figure 2* shows a histogram of draws from the PPD. We used the PPD to calculate 2.5%, 50%, and 97.5% quantiles. Based on these values, there is a 95% probability that the number of medals that France will win in the 2024 Olympics will be between 33 and 72 medals, with 51 as a reasonable point estimate.
+\setlength\parindent{24pt}In order to make a prediction, I took a sample of 1,000,000 from the posterior distribution. I then plugged each simulated $\lambda^*$ in the likelihood function and drew a total of 1,000,000 estimated $Y^*$ values. Through this Monte Carlo approximation approach, I essentially sampled values from the posterior predictive distribution (PPD), $f^*(Y^*\mid Y)$. In other words, the 1,000,000 values that are the output of this procedure serve as an approximation of the posterior predictive distribution. *Figure 2* shows a histogram of draws from the PPD. I used the PPD to calculate 2.5%, 50%, and 97.5% quantiles. Based on these values, there is a 95% probability that the number of medals that France will win in the 2024 Olympics will be between 33 and 72 medals, with 51 as a reasonable point estimate.
 
 \begin{figure}\caption{{\bf Approximate Posterior Predictive Distribution (PPT) of the number of medals France will win in 2024.}\label{f:ppd}}
 \centering 
