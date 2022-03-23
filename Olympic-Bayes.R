@@ -4,7 +4,8 @@ library(dplyr)
 medals <- read.csv('Medals.csv')
 set.seed(21222)
 
-# Aggregate analysis
+# AGGREGATE ANALYSIS
+# Formatting the data
 aggregates <- medals %>% summarise(Y0 = sum(MEDALS.WON.DURING.PREVIOUS.OLYMPICS),
                                    Y1 = sum(MEDALS.WON.DURING.HOST.YEAR),
                                    N0 = sum(PARTICIPATING.ATHLETES.DURING.PREVIOUS.OLYMPICS),
@@ -17,6 +18,7 @@ N1 <- aggregates$N1
 Y1 <- aggregates$Y1
 epsilon <- 0.1
 
+# Sampling from the posterior distributions
 lambda <- seq(0.01, 0.3, 0.0001)
 posterior_0 <- dgamma(lambda, Y0 + epsilon, N0 + epsilon)
 posterior_1 <- dgamma(lambda, Y1 + epsilon, N1 + epsilon)
@@ -35,7 +37,7 @@ p <- p + geom_line(aes(y = posterior_1,
                        color = 'Host Year Posterior',
                        linetype = 'Host Year Posterior'))
 
-# Hypothesis Test
+# HYPOTHESIS TEST
 epsilon <- c(0.01, 0.1, 1, 10, 100)
 prob_null <- c()
 
@@ -48,27 +50,29 @@ for(e in epsilon) {
   prob_null <- c(prob_null, mean(lambda_1 > lambda_0))
 }
 
-# Prediction
-medals <- medals %>% mutate(pct_change_Y = (Y1 - Y0)/Y0, pct_change_N = (N1 - N0)/N0)
-median_pct_change_Y <- quantile(medals$pct_change_Y, 0.5)
+# PREDICTION
+# Loading the data and setting parameters for prior
+medals <- medals %>% mutate(pct_change_N = (N1 - N0)/N0)
 median_pct_change_N <- quantile(medals$pct_change_N, 0.5)
 a <- b <- 0.1
 N0_FR <- 398
 Y0_FR <- 33
-estimated_Y1_FR <- Y0_FR * (1 + median_pct_change_Y)
+
+# Estimating the number of athletes from France
 estimated_N1_FR <- N0_FR * (1 + median_pct_change_N)
-lambda_star <- rgamma(S, estimated_Y1_FR + a, estimated_N1_FR + b)
+lambda_star <- rgamma(S, median(medals$Y1) + a, median(medals$N1) + b)
 ppd <- data.frame(Y1_star = rpois(S, estimated_N1_FR * lambda_star))
 plot_ppd <- ggplot(ppd, aes(Y1_star)) + ggtitle('Posterior Predictive Distribution') + labs(x = expression(Y^"*"))
 
 plot_ppd <- plot_ppd + geom_histogram(color = 'black',
                                       fill = 'darkred',
                                       alpha = 0.5,
-                                      bins = 49)
+                                      bins = 25)
 
+# Posterior median and 95% credible interval
 quantiles <- quantile(ppd$Y1_star, c(0.025, 0.5, 0.975))
 
-# Country-specific Analysis
+# COUNTRY-SPECIFIC ANALYSIS
 country_specific <- medals %>% group_by(country) %>%
   summarise(Y0 = sum(Y0), 
             Y1 = sum(Y1),
